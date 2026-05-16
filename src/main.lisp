@@ -73,8 +73,18 @@
 
 ;;; --- Main Entry Point ---
 
+(defun %limit-font-path ()
+  "Prevent McCLIM from scanning all system TrueType fonts at startup.
+   Per jackdaniel: set mcclim-truetype:*truetype-font-path* to empty
+   string before port initialization."
+  (let ((sym (find-symbol "*TRUETYPE-FONT-PATH*" "MCCLIM-TRUETYPE")))
+    (when (and sym (boundp sym))
+      (setf (symbol-value sym) "")
+      t)))
+
 (defun main (&key file)
   "Launch the Quaestor application."
+  (%limit-font-path)
   (load-config)
   ;; Apply config globals
   (setf *default-commodity* (config-default-commodity *config*))

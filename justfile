@@ -7,7 +7,7 @@ install_dir := "/usr/local/bin"
 # Build with SBCL (default, compressed image)
 build:
     @echo "Building Quaestor with SBCL..."
-    sbcl --non-interactive --load build.lisp
+    sbcl --dynamic-space-size 4096 --non-interactive --load build.lisp
     @echo "Done: bin/quaestor"
 
 # Build with ECL (native compiled)
@@ -18,7 +18,7 @@ build-ecl:
 
 # Run from source (no build needed)
 run *ARGS:
-    sbcl --non-interactive \
+    sbcl --dynamic-space-size 4096 --non-interactive \
          --eval '(require :asdf)' \
          --eval '(asdf:load-system :quaestor)' \
          --eval '(quaestor:main :file "{{default_file}}")' \
@@ -26,7 +26,7 @@ run *ARGS:
 
 # Run the built binary
 run-bin *ARGS:
-    ./bin/quaestor {{ARGS}}
+    ./bin/quaestor --dynamic-space-size 4096 {{ARGS}}
 
 # Install to /usr/local/bin (requires sudo)
 install: build
@@ -40,19 +40,19 @@ uninstall:
 
 # Run tests
 test:
-    sbcl --non-interactive \
+    sbcl --dynamic-space-size 4096 --non-interactive \
          --eval '(require :asdf)' \
          --eval '(asdf:test-system :quaestor)'
 
 # Load into a REPL for interactive development
 repl:
-    sbcl --eval '(require :asdf)' \
+    sbcl --dynamic-space-size 4096 --eval '(require :asdf)' \
          --eval '(asdf:load-system :quaestor)' \
          --eval '(in-package :quaestor)'
 
 # Parse a ledger file and print balance report (CLI mode)
 balance file=default_file:
-    sbcl --non-interactive \
+    sbcl --dynamic-space-size 4096 --non-interactive \
          --eval '(require :asdf)' \
          --eval '(asdf:load-system :quaestor)' \
          --eval '(let ((l (quaestor::parse-ledger-file "{{file}}"))) (dolist (entry (quaestor::balance-report l)) (format t "~40A ~A~%" (car entry) (quaestor::format-amount (cdr entry)))))'
