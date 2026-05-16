@@ -37,6 +37,9 @@
 
 ;;; --- Filtering ---
 
+(declaim (ftype (function ((integer 1) (integer 1 12))
+                          (values local-time:timestamp local-time:timestamp))
+                month-date-range))
 (defun month-date-range (year month)
   "Return (values from to) timestamps for the first and last instant of a given month."
   (let ((from (local-time:encode-timestamp 0 0 0 0 1 month year))
@@ -90,6 +93,10 @@
 
 ;;; --- Reporting ---
 
+(declaim (ftype (function (ledger &key (:account (or null string))
+                                      (:depth (or null (integer 1))))
+                          list)
+                balance-report))
 (defgeneric balance-report (ledger &key account depth)
   (:documentation "Compute a balance report. Returns an alist of (path . amount)."))
 
@@ -120,6 +127,11 @@
                balances)
       (sort result #'string< :key #'car))))
 
+(declaim (ftype (function (ledger &key (:account (or null string))
+                                      (:from (or null local-time:timestamp))
+                                      (:to (or null local-time:timestamp)))
+                          list)
+                register-report))
 (defgeneric register-report (ledger &key account from to)
   (:documentation "Generate a register report: list of transactions with running balance."))
 

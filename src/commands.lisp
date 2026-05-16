@@ -93,13 +93,23 @@
 
 (define-command (com-select-account :command-table quaestor-view-commands :name "Select Account")
     ((acct 'account-presentation :gesture :select))
+  (toggle-account-expanded acct)
   (setf (slot-value *application-frame* 'selected-account) acct)
   (setf (slot-value *application-frame* 'status-message)
         (format nil "Filtering: ~A" (account-full-path acct))))
 
+(define-command (com-dashboard :command-table quaestor-view-commands :name "Dashboard" :menu t
+                                         :keystroke (#\d :control))
+    ()
+  (setf (slot-value *application-frame* 'detail-mode) :dashboard)
+  (setf (slot-value *application-frame* 'selected-account) nil)
+  (setf (slot-value *application-frame* 'selected-transaction) nil)
+  (setf (slot-value *application-frame* 'status-message) "Dashboard"))
+
 (define-command (com-clear-filter :command-table quaestor-view-commands :name "Show All" :menu t)
     ()
   (setf (slot-value *application-frame* 'selected-account) nil)
+  (setf (slot-value *application-frame* 'detail-mode) :dashboard)
   (setf (slot-value *application-frame* 'status-message) "Showing all transactions"))
 
 (define-command (com-add-account :command-table quaestor-edit-commands :name "Add Account" :menu t)
