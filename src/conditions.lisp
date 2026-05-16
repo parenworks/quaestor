@@ -7,7 +7,7 @@
   (:report (lambda (c s)
              (format s "Quaestor error: ~A" (quaestor-error-message c)))))
 
-(define-condition parse-error (quaestor-error)
+(define-condition ledger-parse-error (quaestor-error)
   ((line-number :initarg :line-number :reader parse-error-line-number)
    (line-text :initarg :line-text :reader parse-error-line-text))
   (:report (lambda (c s)
@@ -21,11 +21,11 @@
   (:report (lambda (c s)
              (format s "Validation error: ~A" (quaestor-error-message c)))))
 
-(define-condition file-error (quaestor-error)
-  ((path :initarg :path :reader file-error-path))
+(define-condition ledger-file-error (quaestor-error)
+  ((path :initarg :path :reader ledger-file-error-path))
   (:report (lambda (c s)
              (format s "File error (~A): ~A"
-                     (file-error-path c)
+                     (ledger-file-error-path c)
                      (quaestor-error-message c)))))
 
 (define-condition unbalanced-transaction (validation-error)

@@ -19,6 +19,6 @@
                              (:file "writer")
                              (:file "engine")
                              (:file "presentations")
-                             (:file "commands")
                              (:file "frame")
+                             (:file "commands")
                              (:file "main")))))

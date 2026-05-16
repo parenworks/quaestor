@@ -133,7 +133,7 @@
 (defmethod parse-ledger-file ((path string))
   "Parse the ledger file at PATH, returning a fully populated ledger instance."
   (unless (probe-file path)
-    (error 'file-error :path path :message "File does not exist"))
+    (error 'ledger-file-error :path path :message "File does not exist"))
   (let ((ledger (make-instance 'ledger :file-path path))
         (lines (with-open-file (stream path :direction :input)
                  (loop for line = (read-line stream nil nil)

@@ -84,7 +84,7 @@
 (defmethod write-ledger-file ((ledger ledger) &optional (path (ledger-file-path ledger)))
   "Write the entire ledger to PATH. Creates a backup first."
   (unless path
-    (error 'file-error :path "" :message "No file path specified"))
+    (error 'ledger-file-error :path "" :message "No file path specified"))
   ;; Create backup
   (let ((backup-path (concatenate 'string path ".bak")))
     (when (probe-file path)

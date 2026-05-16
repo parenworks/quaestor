@@ -4,7 +4,7 @@
 
 ;;; --- File Commands ---
 
-(define-quaestor-command (com-open-file :name "Open File" :menu t
+(define-command (com-open-file :command-table quaestor-file-commands :name "Open File" :menu t
                                         :keystroke (#\o :control))
     ((path 'pathname :prompt "Ledger file"))
   (handler-case
@@ -14,11 +14,11 @@
               (format nil "Opened ~A (~D transactions)"
                       (file-namestring path)
                       (length (ledger-transactions ledger)))))
-    (file-error (c)
+    (ledger-file-error (c)
       (setf (slot-value *application-frame* 'status-message)
             (format nil "Error: ~A" c)))))
 
-(define-quaestor-command (com-save :name "Save" :menu t
+(define-command (com-save :command-table quaestor-file-commands :name "Save" :menu t
                                    :keystroke (#\s :control))
     ()
   (when-let (ledger (slot-value *application-frame* 'ledger))
@@ -31,7 +31,7 @@
         (setf (slot-value *application-frame* 'status-message)
               (format nil "Save failed: ~A" c))))))
 
-(define-quaestor-command (com-quit :name "Quit" :menu t
+(define-command (com-quit :command-table quaestor-file-commands :name "Quit" :menu t
                                    :keystroke (#\q :control))
     ()
   (when-let (ledger (slot-value *application-frame* 'ledger))
@@ -42,7 +42,7 @@
 
 ;;; --- Transaction Commands ---
 
-(define-quaestor-command (com-add-transaction :name "Add Transaction" :menu t
+(define-command (com-add-transaction :command-table quaestor-edit-commands :name "Add Transaction" :menu t
                                               :keystroke (#\n :control))
     ()
   (let ((frame *application-frame*))
@@ -56,14 +56,14 @@
                                     (make-instance 'posting :account-path ""))))
     (setf (slot-value frame 'detail-mode) :edit)))
 
-(define-quaestor-command (com-edit-transaction :name "Edit Transaction")
+(define-command (com-edit-transaction :command-table quaestor-edit-commands :name "Edit Transaction")
     ((tx 'transaction-presentation :gesture :select))
   (let ((frame *application-frame*))
     (setf (slot-value frame 'editing-transaction) tx)
     (setf (slot-value frame 'selected-transaction) tx)
     (setf (slot-value frame 'detail-mode) :edit)))
 
-(define-quaestor-command (com-delete-transaction :name "Delete Transaction")
+(define-command (com-delete-transaction :command-table quaestor-edit-commands :name "Delete Transaction")
     ((tx 'transaction-presentation :gesture :delete))
   (when-let (ledger (slot-value *application-frame* 'ledger))
     (remove-transaction ledger tx)
@@ -72,7 +72,7 @@
                   (format-date (transaction-date tx))
                   (transaction-payee tx)))))
 
-(define-quaestor-command (com-save-transaction :name "Save Transaction")
+(define-command (com-save-transaction :command-table quaestor-edit-commands :name "Save Transaction")
     ()
   (let* ((frame *application-frame*)
          (tx (slot-value frame 'editing-transaction))
@@ -91,18 +91,18 @@
 
 ;;; --- Account Commands ---
 
-(define-quaestor-command (com-select-account :name "Select Account")
+(define-command (com-select-account :command-table quaestor-view-commands :name "Select Account")
     ((acct 'account-presentation :gesture :select))
   (setf (slot-value *application-frame* 'selected-account) acct)
   (setf (slot-value *application-frame* 'status-message)
         (format nil "Filtering: ~A" (account-full-path acct))))
 
-(define-quaestor-command (com-clear-filter :name "Show All" :menu t)
+(define-command (com-clear-filter :command-table quaestor-view-commands :name "Show All" :menu t)
     ()
   (setf (slot-value *application-frame* 'selected-account) nil)
   (setf (slot-value *application-frame* 'status-message) "Showing all transactions"))
 
-(define-quaestor-command (com-add-account :name "Add Account" :menu t)
+(define-command (com-add-account :command-table quaestor-edit-commands :name "Add Account" :menu t)
     ((path 'string :prompt "Account path (e.g. Expenses:Food:Bar)")
      (note 'string :prompt "Note (optional)" :default nil))
   (when-let (ledger (slot-value *application-frame* 'ledger))
@@ -112,7 +112,7 @@
 
 ;;; --- Date Range / Month Filter Commands ---
 
-(define-quaestor-command (com-filter-month :name "Filter by Month" :menu t)
+(define-command (com-filter-month :command-table quaestor-view-commands :name "Filter by Month" :menu t)
     ((year 'integer :prompt "Year (e.g. 2026)")
      (month 'integer :prompt "Month (1-12)"))
   (let ((frame *application-frame*))
@@ -127,7 +127,7 @@
                         month)
                   year))))
 
-(define-quaestor-command (com-filter-date-range :name "Filter by Date Range" :menu t)
+(define-command (com-filter-date-range :command-table quaestor-view-commands :name "Filter by Date Range" :menu t)
     ((from-str 'string :prompt "From date (YYYY/MM/DD)")
      (to-str 'string :prompt "To date (YYYY/MM/DD)"))
   (let ((frame *application-frame*))
@@ -138,7 +138,7 @@
     (setf (slot-value frame 'status-message)
           (format nil "Showing ~A to ~A" from-str to-str))))
 
-(define-quaestor-command (com-clear-date-filter :name "Clear Date Filter" :menu t)
+(define-command (com-clear-date-filter :command-table quaestor-view-commands :name "Clear Date Filter" :menu t)
     ()
   (let ((frame *application-frame*))
     (setf (slot-value frame 'filter-month) nil)
@@ -149,7 +149,7 @@
 
 ;;; --- Quick Entry Commands ---
 
-(define-quaestor-command (com-add-expense :name "Add Expense" :menu t)
+(define-command (com-add-expense :command-table quaestor-edit-commands :name "Add Expense" :menu t)
     ((date-str 'string :prompt "Date (YYYY/MM/DD)")
      (payee 'string :prompt "Payee")
      (amount-str 'string :prompt "Amount (e.g. 49.99)")
@@ -172,7 +172,7 @@
       (setf (slot-value *application-frame* 'status-message)
             (format nil "Added expense: ~A ~A" payee (format-amount amt))))))
 
-(define-quaestor-command (com-add-income :name "Add Income/Deposit" :menu t)
+(define-command (com-add-income :command-table quaestor-edit-commands :name "Add Income/Deposit" :menu t)
     ((date-str 'string :prompt "Date (YYYY/MM/DD)")
      (payee 'string :prompt "Source/Payee")
      (amount-str 'string :prompt "Amount (e.g. 2500.00)")
@@ -195,7 +195,7 @@
       (setf (slot-value *application-frame* 'status-message)
             (format nil "Added income: ~A ~A" payee (format-amount amt))))))
 
-(define-quaestor-command (com-add-transfer :name "Add Transfer" :menu t)
+(define-command (com-add-transfer :command-table quaestor-edit-commands :name "Add Transfer" :menu t)
     ((date-str 'string :prompt "Date (YYYY/MM/DD)")
      (payee 'string :prompt "Description")
      (amount-str 'string :prompt "Amount")
@@ -220,14 +220,14 @@
 
 ;;; --- Report Commands ---
 
-(define-quaestor-command (com-balance-report :name "Balance Report" :menu t)
+(define-command (com-balance-report :command-table quaestor-report-commands :name "Balance Report" :menu t)
     ()
   (when-let (ledger (slot-value *application-frame* 'ledger))
     (setf (slot-value *application-frame* 'report-data)
           (balance-report ledger))
     (setf (slot-value *application-frame* 'detail-mode) :report)))
 
-(define-quaestor-command (com-register-report :name "Register Report" :menu t)
+(define-command (com-register-report :command-table quaestor-report-commands :name "Register Report" :menu t)
     ()
   (let ((frame *application-frame*))
     (when-let (ledger (slot-value frame 'ledger))
@@ -237,7 +237,7 @@
               (register-report ledger :account account))
         (setf (slot-value frame 'detail-mode) :report)))))
 
-(define-quaestor-command (com-monthly-summary :name "Monthly Summary" :menu t)
+(define-command (com-monthly-summary :command-table quaestor-report-commands :name "Monthly Summary" :menu t)
     ((year 'integer :prompt "Year")
      (month 'integer :prompt "Month (1-12)"))
   (let ((frame *application-frame*))

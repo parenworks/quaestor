@@ -2,6 +2,12 @@
 
 ;;; McCLIM application frame definition for Quaestor.
 
+;;; Sub-command tables (commands add themselves via :command-table)
+(define-command-table quaestor-file-commands)
+(define-command-table quaestor-edit-commands)
+(define-command-table quaestor-view-commands)
+(define-command-table quaestor-report-commands)
+
 (define-application-frame quaestor ()
   ((ledger :initform nil :accessor frame-ledger)
    (selected-account :initform nil :accessor frame-selected-account)
@@ -52,31 +58,6 @@
                                   quaestor-edit-commands
                                   quaestor-view-commands
                                   quaestor-report-commands))))
-
-;;; --- Command Tables ---
-
-(define-command-table quaestor-file-commands
-  :menu (("Open" :command com-open-file)
-         ("Save" :command com-save)
-         ("Quit" :command com-quit)))
-
-(define-command-table quaestor-edit-commands
-  :menu (("Add Transaction" :command com-add-transaction)
-         ("Add Expense" :command com-add-expense)
-         ("Add Income/Deposit" :command com-add-income)
-         ("Add Transfer" :command com-add-transfer)
-         ("Add Account" :command com-add-account)))
-
-(define-command-table quaestor-view-commands
-  :menu (("Show All" :command com-clear-filter)
-         ("Filter by Month" :command com-filter-month)
-         ("Filter by Date Range" :command com-filter-date-range)
-         ("Clear Date Filter" :command com-clear-date-filter)))
-
-(define-command-table quaestor-report-commands
-  :menu (("Balance" :command com-balance-report)
-         ("Register" :command com-register-report)
-         ("Monthly Summary" :command com-monthly-summary)))
 
 ;;; --- Display Functions ---
 
