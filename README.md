@@ -9,13 +9,13 @@ A desktop personal finance manager built with [McCLIM](https://mcclim.common-lis
 
 ## Features
 
-- **Dashboard** — current balance, monthly income/expense summary, recent transactions at a glance
-- **Account tree** — collapsible, colour-coded by type (assets, liabilities, income, expenses, equity)
-- **Transaction list** — zebra-striped rows, sortable, filterable by account, date range, month/year
-- **Balance & register reports** — equivalent to `ledger bal` and `ledger reg`
-- **Dark mode** — full dark colour palette with themed panes
-- **ledger-cli compatible** — reads and writes standard `.ledger` format; works alongside `ledger`, `hledger`, etc.
-- **Keyboard-driven** — CLIM interactor for command entry, plus menu bar and mouse interaction
+- **Dashboard** - current balance, monthly income/expense summary, recent transactions at a glance
+- **Account tree** - collapsible, colour-coded by type (assets, liabilities, income, expenses, equity)
+- **Transaction list** - zebra-striped rows, sortable, filterable by account, date range, month/year
+- **Balance & register reports** - equivalent to `ledger bal` and `ledger reg`
+- **Dark mode** - full dark colour palette with themed panes
+- **ledger-cli compatible** - reads and writes standard `.ledger` format; works alongside `ledger`, `hledger`, etc.
+- **Keyboard-driven** - CLIM interactor for command entry, plus menu bar and mouse interaction
 
 ## Requirements
 
